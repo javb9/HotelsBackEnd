@@ -37,5 +37,12 @@ namespace HotelManagement.Application.Services
             return result;
         }
 
+        public Response<string> UpdateStatusReservation(ReservationStatusDto ReservationStatusDto)
+        {
+            var result = _hotelreservation.UpdateStatusReservation(ReservationStatusDto);
+
+            return result;
+        }
+
     }
 }

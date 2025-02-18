@@ -75,7 +75,7 @@ namespace HotelManagement.Infraestructure.Repositories
             }
             catch (Exception ex)
             {
-                return new Response<string>("ERROR", false, "error when creating hotel, please contact IT");
+                return new Response<string>("ERROR", false, "error, please contact IT");
             }
         }
 
@@ -151,7 +151,7 @@ namespace HotelManagement.Infraestructure.Repositories
             }
             catch (Exception ex)
             {
-                return new Response<string>("ERROR", false, "error when creating Room, please contact IT");
+                return new Response<string>("ERROR", false, "error, please contact IT");
             }
         }
     }

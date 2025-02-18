@@ -8,6 +8,7 @@ namespace HotelManagement.Domain.Interfaces
         Response<List<Dictionary<string, string>>> AvailableRooms(DateTime initDate, DateTime finalDate, int numberOfPeople, string City);
         Response<string> CreateReservation(HotelReservationDto HotelReservationDto);
         Response<object> Reservations();
+        Response<string> UpdateStatusReservation(ReservationStatusDto ReservationStatusDto);
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HotelManagement.Domain.Enums;
+using static HotelManagement.Domain.Enums.States;
 
 namespace HotelManagement.Application.Dtos
 {
@@ -18,5 +19,11 @@ namespace HotelManagement.Application.Dtos
         public DateTime FinalDate { get; set; }
         public string CompleteNameEmergencyContact { get; set; }
         public string PhoneNumberEmergencyContact { get; set; }
+    }
+
+    public class ReservationStatusDto
+    {
+        public int IdReservation { get; set; }
+        public State State { get; set; }
     }
 }

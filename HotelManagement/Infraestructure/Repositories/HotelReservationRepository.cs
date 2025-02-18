@@ -147,22 +147,6 @@ namespace HotelManagement.Infraestructure.Repositories
             }
         }
 
-        public List<Room> ValidateRoomAvailable(DateTime initDate, DateTime finalDate, int numberOfPeople, string City)
-        {
-            // validate if there are any reservations based on dates
-            var reservation = _context.Reservation.Where(x =>
-                    (x.InitDate <= initDate && initDate <= x.FinalDate) || (x.InitDate <= finalDate && finalDate <= x.FinalDate) || (initDate <= x.InitDate && x.FinalDate <= finalDate) && (x.state == State.Active)
-                ).Select(x => x.IdRoom).ToArray();
-
-            // get the hotels in the selected location
-            var hotels = _context.Hotels.Where(x => x.Ubication.ToLower().Contains(City.ToLower())).Select(x=>x.IdHotel).ToArray();
-
-            // validate rooms available according to capacity and if the room is active
-            var rooms = _context.Rooms.Where(x => !reservation.Contains(x.IdRoom) && x.Capacity >= numberOfPeople && hotels.Contains(x.IdHotel) && (x.State == State.Active)).ToList();
-
-            return rooms;
-        }
-
         public Response<object> Reservations()
         {
             try
@@ -177,7 +161,7 @@ namespace HotelManagement.Infraestructure.Repositories
                         on reserve.IdClient equals client.IdClient
                         join emergencyContact in _context.EmergencyContact
                         on reserve.IdEmergencyContact equals emergencyContact.IdEmergencyContact
-                        where reserve.state == State.Active
+                        where reserve.state == State.Active && hotel.State == State.Active && room.State == State.Active
                         select new {
                             Hotel = hotel.Name,
                             HotelUbication = hotel.Ubication,
@@ -203,6 +187,49 @@ namespace HotelManagement.Infraestructure.Repositories
             {
                 return new Response<object>(null, false, "error, please contact IT");
             }
+        }
+
+        public Response<string> UpdateStatusReservation(ReservationStatusDto ReservationStatusDto)
+        {
+            try
+            {
+                if (ReservationStatusDto.IdReservation == null || ReservationStatusDto.IdReservation == 0)
+                {
+                    return new Response<string>("ERROR", false, "Reservation id must be sent");
+                };
+
+                var reservation = _context.Reservation.FirstOrDefault(x => x.IdReservation == ReservationStatusDto.IdReservation);
+
+                if (reservation == null)
+                {
+                    return new Response<string>("ERROR", false, "The reservation must be registered");
+                }
+                reservation.state = ReservationStatusDto.State;
+                _context.Reservation.Update(reservation);
+                _context.SaveChanges();
+
+                return new Response<string>("OK", true, "Reservation succesfully updated");
+            }
+            catch (Exception ex)
+            {
+                return new Response<string>("ERROR", false, "error, please contact IT");
+            }
+        }
+
+        public List<Room> ValidateRoomAvailable(DateTime initDate, DateTime finalDate, int numberOfPeople, string City)
+        {
+            // validate if there are any reservations based on dates
+            var reservation = _context.Reservation.Where(x =>
+                    (x.InitDate <= initDate && initDate <= x.FinalDate) || (x.InitDate <= finalDate && finalDate <= x.FinalDate) || (initDate <= x.InitDate && x.FinalDate <= finalDate) && (x.state == State.Active)
+                ).Select(x => x.IdRoom).ToArray();
+
+            // get the hotels in the selected location
+            var hotels = _context.Hotels.Where(x => x.Ubication.ToLower().Contains(City.ToLower())).Select(x=>x.IdHotel).ToArray();
+
+            // validate rooms available according to capacity and if the room is active
+            var rooms = _context.Rooms.Where(x => !reservation.Contains(x.IdRoom) && x.Capacity >= numberOfPeople && hotels.Contains(x.IdHotel) && (x.State == State.Active)).ToList();
+
+            return rooms;
         }
     }
 }

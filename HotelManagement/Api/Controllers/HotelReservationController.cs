@@ -64,5 +64,21 @@ namespace HotelManagement.Api.Controllers
             }
             return Ok(result);
         }
+
+        /// <summary>
+        /// update status for reservations, active = 1 and inactive = 0
+        /// </summary>
+        /// <param name="ReservationStatusDto"></param>
+        /// <returns></returns>
+        [HttpPatch("UpdateStatusReservation")]
+        public IActionResult UpdateStatusReservation([FromBody] ReservationStatusDto ReservationStatusDto)
+        {
+            var result = _hotelreservationservice.UpdateStatusReservation(ReservationStatusDto);
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+            return Ok(result);
+        }
     }
 }
