@@ -50,13 +50,12 @@ Este es el backend para la gestión de hoteles, desarrollado con .NET. Proporcio
 -  PUT   /api/HotelManagement/UpdateRoom         - Actualizacion de habitacion 
 -  PATCH /api/HotelManagement/UpdateStatusRoom   - Activacion o desactivacion de habitacion
 
-
 ### Reservacion de Hotel
 
--  GET  /api/HotelReservation/AvailableRooms     -  Obtiene habitaciones disponibles segun filtros especificados 
--  POST /api/HotelReservation/CreateReservation  -  Crea una reservacion
--  GET  /api/HotelReservation/Reservations       -  Lista las reservaciones realizadas
--  
+-  GET   /api/HotelReservation/AvailableRooms             -  Obtiene habitaciones disponibles segun filtros especificados 
+-  POST  /api/HotelReservation/CreateReservation          -  Crea una reservacion
+-  GET   /api/HotelReservation/Reservations               -  Lista las reservaciones realizadas
+-  PATCH /api/HotelReservation/UpdateStatusReservation    - Activacion o desactivacion de reservas realizadas
 ## Arquitectura
 
 Este proyecto sigue los principios de la Arquitectura Orientada al Dominio (DDD) y utiliza la Inyección de Dependencia para gestionar las dependencias entre los componentes. La estructura del proyecto está organizada de la siguiente manera:
