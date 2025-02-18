@@ -25,6 +25,7 @@ _ReSharper.Caches/
 
 # Visual Studio Code
 .vscode/
+.vs/
 
 # Windows image file caches
 Thumbs.db
