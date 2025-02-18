@@ -1,0 +1,46 @@
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Bb]in/
+[Oo]bj/
+
+# Rider
+.idea/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+*.ncrunch*
+_ReSharper.Caches/
+
+# Azure DevOps
+.tf/
+
+# Visual Studio Code
+.vscode/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# NPM Packages
+node_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# DotNet
+.dotnet/
