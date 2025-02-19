@@ -195,6 +195,7 @@ namespace HotelManagement.Infraestructure.Repositories
 
                     Dictionary<string, object> Reserve = new Dictionary<string, object>();
 
+                    Reserve.Add("IdReservation", reservation.IdReservation);
                     Reserve.Add("Hotel", reservation.Hotel);
                     Reserve.Add("HotelUbication", reservation.HotelUbication);
                     Reserve.Add("RoomNumber", reservation.RoomNumber);

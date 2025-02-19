@@ -5,7 +5,6 @@ namespace HotelManagement.Domain.Models
 {
     public class Hotel
     {
-
         public int IdHotel { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }

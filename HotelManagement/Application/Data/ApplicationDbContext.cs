@@ -76,6 +76,8 @@ namespace HotelManagement.Application.Data
 
                 Customer.HasKey(c => c.IdCustomer);
 
+                Customer.Property(c => c.IdReservation).IsRequired(true);
+
                 Customer.Property(c => c.Name).IsRequired(true).HasMaxLength(50);
 
                 Customer.Property(c => c.LastName).IsRequired(true).HasMaxLength(50);
@@ -91,6 +93,8 @@ namespace HotelManagement.Application.Data
                 Customer.Property(c => c.Email).IsRequired(true).HasMaxLength(50);
 
                 Customer.Property(c => c.PhoneNumber).IsRequired(true).HasMaxLength(20);
+
+                Customer.Property(c => c.CustomerType).IsRequired(true);
 
                 Customer.HasOne(x => x.Reservations).WithMany(x => x.Customer).HasForeignKey(x => x.IdReservation);
 
