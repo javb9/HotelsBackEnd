@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250218024749_initialCreate")]
+    [Migration("20250219194718_initialCreate")]
     partial class initialCreate
     {
         /// <inheritdoc />
@@ -25,13 +25,16 @@ namespace HotelManagement.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HotelManagement.Domain.Models.Client", b =>
+            modelBuilder.Entity("HotelManagement.Domain.Models.Customer", b =>
                 {
-                    b.Property<int>("IdClient")
+                    b.Property<int>("IdCustomer")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdClient"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCustomer"));
+
+                    b.Property<int>("CustomerType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateBirth")
                         .HasColumnType("datetime2");
@@ -51,6 +54,9 @@ namespace HotelManagement.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdReservation")
+                        .HasColumnType("int");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -66,9 +72,11 @@ namespace HotelManagement.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("IdClient");
+                    b.HasKey("IdCustomer");
 
-                    b.ToTable("Client", (string)null);
+                    b.HasIndex("IdReservation");
+
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("HotelManagement.Domain.Models.EmergencyContact", b =>
@@ -149,9 +157,6 @@ namespace HotelManagement.Migrations
                     b.Property<DateTime>("FinalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("IdClient")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdEmergencyContact")
                         .HasColumnType("int");
 
@@ -168,8 +173,6 @@ namespace HotelManagement.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("IdReservation");
-
-                    b.HasIndex("IdClient");
 
                     b.HasIndex("IdEmergencyContact")
                         .IsUnique();
@@ -224,14 +227,19 @@ namespace HotelManagement.Migrations
                     b.ToTable("Room", (string)null);
                 });
 
-            modelBuilder.Entity("HotelManagement.Domain.Models.Reservation", b =>
+            modelBuilder.Entity("HotelManagement.Domain.Models.Customer", b =>
                 {
-                    b.HasOne("HotelManagement.Domain.Models.Client", "Client")
-                        .WithMany("Reservations")
-                        .HasForeignKey("IdClient")
+                    b.HasOne("HotelManagement.Domain.Models.Reservation", "Reservations")
+                        .WithMany("Customer")
+                        .HasForeignKey("IdReservation")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("HotelManagement.Domain.Models.Reservation", b =>
+                {
                     b.HasOne("HotelManagement.Domain.Models.EmergencyContact", "EmergencyContact")
                         .WithOne("Reservation")
                         .HasForeignKey("HotelManagement.Domain.Models.Reservation", "IdEmergencyContact")
@@ -243,8 +251,6 @@ namespace HotelManagement.Migrations
                         .HasForeignKey("IdRoom")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Client");
 
                     b.Navigation("EmergencyContact");
 
@@ -262,11 +268,6 @@ namespace HotelManagement.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("HotelManagement.Domain.Models.Client", b =>
-                {
-                    b.Navigation("Reservations");
-                });
-
             modelBuilder.Entity("HotelManagement.Domain.Models.EmergencyContact", b =>
                 {
                     b.Navigation("Reservation");
@@ -275,6 +276,11 @@ namespace HotelManagement.Migrations
             modelBuilder.Entity("HotelManagement.Domain.Models.Hotel", b =>
                 {
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("HotelManagement.Domain.Models.Reservation", b =>
+                {
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("HotelManagement.Domain.Models.Room", b =>

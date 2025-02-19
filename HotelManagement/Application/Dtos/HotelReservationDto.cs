@@ -1,4 +1,5 @@
 ﻿using HotelManagement.Domain.Enums;
+using HotelManagement.Domain.Models;
 using static HotelManagement.Domain.Enums.States;
 
 namespace HotelManagement.Application.Dtos
@@ -6,19 +7,11 @@ namespace HotelManagement.Application.Dtos
     public class HotelReservationDto
     {
         public int IdRoom { get; set; }
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateBirth { get; set; }
-        public Gender Gender { get; set; }
-        public DocumentType DocumentType { get; set; }
-        public string DocumentNumber { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public List<Customer> Customer { get; set; }
         public int NumberOfPeople { get; set; }
         public DateTime InitDate { get; set; }
         public DateTime FinalDate { get; set; }
-        public string CompleteNameEmergencyContact { get; set; }
-        public string PhoneNumberEmergencyContact { get; set; }
+        public EmergencyContact EmergencyContact { get; set; }
     }
 
     public class ReservationStatusDto

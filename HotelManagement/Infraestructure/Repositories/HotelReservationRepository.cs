@@ -1,6 +1,7 @@
 ﻿using HotelManagement.Application.Data;
 using HotelManagement.Application.Dtos;
 using HotelManagement.Application.Services;
+using HotelManagement.Domain.Enums;
 using HotelManagement.Domain.Interfaces;
 using HotelManagement.Domain.Models;
 using Microsoft.AspNetCore.Components.Forms;
@@ -96,39 +97,31 @@ namespace HotelManagement.Infraestructure.Repositories
                     return new Response<string>("ERROR", false, "The room is already reserved or the number of persons exceeds the capacity");
                 }
 
-                Client client = new Client();
-
-                //validate if exist the client
-                client = _context.Client.Where(x => x.DocumentNumber == HotelReservationDto.DocumentNumber).FirstOrDefault();
-
-                if (client == null)
+                //Validate if the number of companions matches the number of companions you are trying to register
+                if (HotelReservationDto.NumberOfPeople  != HotelReservationDto.Customer.Count)
                 {
-                    client = new Client();
-                    client.Name = HotelReservationDto.Name;
-                    client.LastName = HotelReservationDto.LastName;
-                    client.DateBirth = HotelReservationDto.DateBirth;
-                    client.Gender = HotelReservationDto.Gender;
-                    client.DocumentType = HotelReservationDto.DocumentType;
-                    client.DocumentNumber = HotelReservationDto.DocumentNumber;
-                    client.Email = HotelReservationDto.Email;
-                    client.PhoneNumber = HotelReservationDto.PhoneNumber;
-
-                    _context.Client.Add(client);
-                    _context.SaveChanges();
+                    return new Response<string>("ERROR", false, "The number of persons does not match with the registered companions");
                 }
 
+                //Validate if more than one client is the owner
+                if (HotelReservationDto.Customer.Count(x=> x.CustomerType == CustomerType.Owner) > 1)
+                {
+                    return new Response<string>("ERROR", false, "Only one client can be registered as owner");
+                }
+                
+                // create emergency contact
                 EmergencyContact EmergencyContact = new EmergencyContact();
 
-                EmergencyContact.CompleteName = HotelReservationDto.CompleteNameEmergencyContact;
-                EmergencyContact.PhoneNumber = HotelReservationDto.PhoneNumberEmergencyContact;
+                EmergencyContact.CompleteName = HotelReservationDto.EmergencyContact.CompleteName;
+                EmergencyContact.PhoneNumber = HotelReservationDto.EmergencyContact.PhoneNumber;
 
                 _context.EmergencyContact.Add(EmergencyContact);
                 _context.SaveChanges();
 
+                //create reservation
                 Reservation Reservation = new Reservation();
 
                 Reservation.IdRoom = HotelReservationDto.IdRoom;
-                Reservation.IdClient = client.IdClient;
                 Reservation.IdEmergencyContact = EmergencyContact.IdEmergencyContact;
                 Reservation.NumberOfPeople = HotelReservationDto.NumberOfPeople;
                 Reservation.InitDate = HotelReservationDto.InitDate;
@@ -137,6 +130,26 @@ namespace HotelManagement.Infraestructure.Repositories
 
                 _context.Reservation.Add(Reservation);
                 _context.SaveChanges();
+
+                //create customers
+                foreach (var customer in HotelReservationDto.Customer)
+                {
+                    Customer CustomerNew = new Customer();
+
+                    CustomerNew.IdReservation = Reservation.IdReservation;
+                    CustomerNew.Name = customer.Name;
+                    CustomerNew.LastName = customer.LastName;
+                    CustomerNew.DateBirth = customer.DateBirth;
+                    CustomerNew.Gender = customer.Gender;
+                    CustomerNew.DocumentType = customer.DocumentType;
+                    CustomerNew.DocumentNumber = customer.DocumentNumber;
+                    CustomerNew.Email = customer.Email;
+                    CustomerNew.PhoneNumber = customer.PhoneNumber;
+                    CustomerNew.CustomerType = customer.CustomerType;
+
+                    _context.Customer.Add(CustomerNew);
+                    _context.SaveChanges();
+                }
 
                 return new Response<string>("OK", true, "Successful booking");
 
@@ -151,28 +164,23 @@ namespace HotelManagement.Infraestructure.Repositories
         {
             try
             {
+                List<Dictionary<string, object>> Reserves = new List<Dictionary<string, object>>();
 
                 var queryReserves = from reserve in _context.Reservation
                         join room in _context.Rooms
                         on reserve.IdRoom equals room.IdRoom
                         join hotel in _context.Hotels
                         on room.IdHotel equals hotel.IdHotel
-                        join client in _context.Client
-                        on reserve.IdClient equals client.IdClient
                         join emergencyContact in _context.EmergencyContact
                         on reserve.IdEmergencyContact equals emergencyContact.IdEmergencyContact
                         where reserve.state == State.Active && hotel.State == State.Active && room.State == State.Active
                         select new {
+                            IdReservation = reserve.IdReservation,
                             Hotel = hotel.Name,
                             HotelUbication = hotel.Ubication,
                             RoomNumber = room.Number,
                             RoomType = room.RoomType,
                             RoomUbication = room.Ubication,
-                            NameClient = $"{client.Name} {client.LastName}",
-                            ClientDocumenType = client.DocumentType,
-                            ClientDocument = client.DocumentNumber,
-                            ClientEmail = client.Email,
-                            ClientPhoneNumber = client.PhoneNumber,
                             NumberOfPeople = reserve.NumberOfPeople,
                             InitDate = reserve.InitDate,
                             FinalDate = reserve.FinalDate,
@@ -180,8 +188,36 @@ namespace HotelManagement.Infraestructure.Repositories
                             emergencyContactPhoneNumber = emergencyContact.PhoneNumber
                         };
 
-                return new Response<object>(queryReserves.ToList(), true, "Reserves found");
+                foreach(var reservation in queryReserves.ToList())
+                {
+                    var customerOwner = _context.Customer.First(x => x.IdReservation == reservation.IdReservation && x.CustomerType == CustomerType.Owner);
+                    var customerCompanions = _context.Customer.Where(x => x.IdReservation == reservation.IdReservation && x.CustomerType == CustomerType.companion).ToList();
 
+                    Dictionary<string, object> Reserve = new Dictionary<string, object>();
+
+                    Reserve.Add("Hotel", reservation.Hotel);
+                    Reserve.Add("HotelUbication", reservation.HotelUbication);
+                    Reserve.Add("RoomNumber", reservation.RoomNumber);
+                    Reserve.Add("RoomType", reservation.RoomType);
+                    Reserve.Add("RoomUbication", reservation.RoomUbication);
+                    Reserve.Add("customerOwner", customerOwner);
+                    Reserve.Add("customerCompanions", customerCompanions);
+                    Reserve.Add("NumberOfPeople", reservation.NumberOfPeople);
+                    Reserve.Add("InitDate", reservation.InitDate);
+                    Reserve.Add("FinalDate", reservation.FinalDate);
+                    Reserve.Add("emergencyContactName", reservation.emergencyContactName);
+                    Reserve.Add("emergencyContactPhoneNumber", reservation.emergencyContactPhoneNumber);
+
+                    Reserves.Add(Reserve);
+                }
+
+                if(Reserves.Count == 0)
+                {
+                    return new Response<object>(null, true, "There are no active reservations");
+                }
+
+                return new Response<object>(Reserves, true, "Reserves found");
+               
             }
             catch
             {
@@ -231,5 +267,6 @@ namespace HotelManagement.Infraestructure.Repositories
 
             return rooms;
         }
+
     }
 }

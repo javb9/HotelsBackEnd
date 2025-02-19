@@ -3,9 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace HotelManagement.Domain.Models
 {
-    public class Client
+    public class Customer
     {
-        public int IdClient { get; set; }
+        [JsonIgnore]
+        public int IdCustomer { get; set; }
+        [JsonIgnore]
+        public int IdReservation { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
         public DateTime DateBirth { get; set; }
@@ -14,8 +17,9 @@ namespace HotelManagement.Domain.Models
         public string DocumentNumber { get; set; }
         public string Email {  get; set; }
         public string PhoneNumber { get; set; }
+        public CustomerType CustomerType { get; set; }
 
         [JsonIgnore]
-        public ICollection<Reservation>? Reservations { get; set; }
+        public Reservation? Reservations { get; set; }
     }
 }

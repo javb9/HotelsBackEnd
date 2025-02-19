@@ -8,7 +8,6 @@ namespace HotelManagement.Domain.Models
     {
         public int IdReservation { get; set; }
         public int IdRoom { get; set; }
-        public int IdClient { get; set; }
         public int IdEmergencyContact {  get; set; }
         public int NumberOfPeople { get; set; }
         public DateTime InitDate { get; set; }
@@ -19,7 +18,7 @@ namespace HotelManagement.Domain.Models
         public Room? Room { get; set; }
 
         [JsonIgnore]
-        public Client? Client { get; set; }
+        public ICollection<Customer>? Customer { get; set; }
 
         [JsonIgnore]
         public EmergencyContact? EmergencyContact { get; set; }

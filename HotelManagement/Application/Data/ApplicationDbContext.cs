@@ -13,7 +13,7 @@ namespace HotelManagement.Application.Data
 
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<Client> Client { get; set; }
+        public DbSet<Customer> Customer { get; set; }
         public DbSet<EmergencyContact> EmergencyContact { get; set; }
         public DbSet<Reservation> Reservation { get; set; }
 
@@ -70,31 +70,32 @@ namespace HotelManagement.Application.Data
 
             });
 
-            modelBuilder.Entity<Client>(client => {
+            modelBuilder.Entity<Customer>(Customer => {
 
-                client.ToTable("Client");
+                Customer.ToTable("Customer");
 
-                client.HasKey(c => c.IdClient);
+                Customer.HasKey(c => c.IdCustomer);
 
-                client.Property(c => c.Name).IsRequired(true).HasMaxLength(50);
+                Customer.Property(c => c.Name).IsRequired(true).HasMaxLength(50);
 
-                client.Property(c => c.LastName).IsRequired(true).HasMaxLength(50);
+                Customer.Property(c => c.LastName).IsRequired(true).HasMaxLength(50);
 
-                client.Property(c => c.DateBirth).IsRequired(true);
+                Customer.Property(c => c.DateBirth).IsRequired(true);
 
-                client.Property(c => c.Gender).IsRequired(true);
+                Customer.Property(c => c.Gender).IsRequired(true);
 
-                client.Property(c => c.DocumentType).IsRequired(true);
+                Customer.Property(c => c.DocumentType).IsRequired(true);
 
-                client.Property(c => c.DocumentNumber).IsRequired(true);
+                Customer.Property(c => c.DocumentNumber).IsRequired(true);
 
-                client.Property(c => c.Email).IsRequired(true).HasMaxLength(50);
+                Customer.Property(c => c.Email).IsRequired(true).HasMaxLength(50);
 
-                client.Property(c => c.PhoneNumber).IsRequired(true).HasMaxLength(20);
+                Customer.Property(c => c.PhoneNumber).IsRequired(true).HasMaxLength(20);
 
-                client.HasMany(x => x.Reservations).WithOne(x => x.Client).HasForeignKey(x => x.IdClient);
+                Customer.HasOne(x => x.Reservations).WithMany(x => x.Customer).HasForeignKey(x => x.IdReservation);
 
             });
+
 
             modelBuilder.Entity<EmergencyContact>(emergencycontact => {
 
@@ -117,8 +118,6 @@ namespace HotelManagement.Application.Data
                 reservation.HasKey(c => c.IdReservation);
 
                 reservation.Property(c => c.IdRoom).IsRequired(true);
-
-                reservation.Property(c => c.IdClient).IsRequired(true);
 
                 reservation.Property(c => c.InitDate).IsRequired(true);
 

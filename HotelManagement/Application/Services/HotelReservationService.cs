@@ -25,7 +25,7 @@ namespace HotelManagement.Application.Services
         {
             var result = _hotelreservation.CreateReservation(HotelReservationDto);
             if (result.Success) {
-                _email.SendEmail(HotelReservationDto.Email, "Reserve Confimation", "¡¡Your reservation is confirmed!!, thank you for choosing us.");
+                _email.SendEmail(HotelReservationDto.Customer.First(x => x.CustomerType == Domain.Enums.CustomerType.Owner).Email, "Reserve Confimation", "¡¡Your reservation is confirmed!!, thank you for choosing us.");
             }
             return result;
         }

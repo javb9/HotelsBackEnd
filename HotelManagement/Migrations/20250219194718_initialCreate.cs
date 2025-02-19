@@ -12,26 +12,6 @@ namespace HotelManagement.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Client",
-                columns: table => new
-                {
-                    IdClient = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    DateBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    DocumentType = table.Column<int>(type: "int", nullable: false),
-                    DocumentNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Client", x => x.IdClient);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EmergencyContact",
                 columns: table => new
                 {
@@ -97,7 +77,6 @@ namespace HotelManagement.Migrations
                     IdReservation = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdRoom = table.Column<int>(type: "int", nullable: false),
-                    IdClient = table.Column<int>(type: "int", nullable: false),
                     IdEmergencyContact = table.Column<int>(type: "int", nullable: false),
                     NumberOfPeople = table.Column<int>(type: "int", nullable: false),
                     InitDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -107,12 +86,6 @@ namespace HotelManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservation", x => x.IdReservation);
-                    table.ForeignKey(
-                        name: "FK_Reservation_Client_IdClient",
-                        column: x => x.IdClient,
-                        principalTable: "Client",
-                        principalColumn: "IdClient",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservation_EmergencyContact_IdEmergencyContact",
                         column: x => x.IdEmergencyContact,
@@ -127,10 +100,38 @@ namespace HotelManagement.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    IdCustomer = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdReservation = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DateBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    DocumentType = table.Column<int>(type: "int", nullable: false),
+                    DocumentNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CustomerType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.IdCustomer);
+                    table.ForeignKey(
+                        name: "FK_Customer_Reservation_IdReservation",
+                        column: x => x.IdReservation,
+                        principalTable: "Reservation",
+                        principalColumn: "IdReservation",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Reservation_IdClient",
-                table: "Reservation",
-                column: "IdClient");
+                name: "IX_Customer_IdReservation",
+                table: "Customer",
+                column: "IdReservation");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservation_IdEmergencyContact",
@@ -153,10 +154,10 @@ namespace HotelManagement.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Reservation");
+                name: "Customer");
 
             migrationBuilder.DropTable(
-                name: "Client");
+                name: "Reservation");
 
             migrationBuilder.DropTable(
                 name: "EmergencyContact");
