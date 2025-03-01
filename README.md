@@ -41,21 +41,24 @@ Este es el backend para la gestión de hoteles, desarrollado con .NET. Proporcio
 
 ## Endpoints
 
+- URL SWAGGER http://hotelsback.somee.com/swagger/index.html (en la publicacion se permitio que se visualizara el swagger por efectos de pruebas, de igual manera la API es consumible con POSTMAN)
+
 ### Administracion de Hotel
 
--  POST  /api/HotelManagement/CreateHotel        - Creacion de hotel
--  PUT   /api/HotelManagement/UpdateHotel        - Actualizacion de hotel 
--  PATCH /api/HotelManagement/UpdateStatusHotel  - Activacion o desactivacion de hotel
--  POST  /api/HotelManagement/CreateRoom         - Creacion de habitacion
--  PUT   /api/HotelManagement/UpdateRoom         - Actualizacion de habitacion 
--  PATCH /api/HotelManagement/UpdateStatusRoom   - Activacion o desactivacion de habitacion
+-  POST  http://hotelsback.somee.com/api/HotelManagement/CreateHotel        - Creacion de hotel
+-  PUT   http://hotelsback.somee.com/api/HotelManagement/UpdateHotel        - Actualizacion de hotel 
+-  PATCH http://hotelsback.somee.com/api/HotelManagement/UpdateStatusHotel  - Activacion o desactivacion de hotel
+-  POST  http://hotelsback.somee.com/api/HotelManagement/CreateRoom         - Creacion de habitacion
+-  PUT   http://hotelsback.somee.com/api/HotelManagement/UpdateRoom         - Actualizacion de habitacion 
+-  PATCH http://hotelsback.somee.com/api/HotelManagement/UpdateStatusRoom   - Activacion o desactivacion de habitacion
 
 ### Reservacion de Hotel
 
--  GET   /api/HotelReservation/AvailableRooms             -  Obtiene habitaciones disponibles segun filtros especificados 
--  POST  /api/HotelReservation/CreateReservation          -  Crea una reservacion
--  GET   /api/HotelReservation/Reservations               -  Lista las reservaciones realizadas
--  PATCH /api/HotelReservation/UpdateStatusReservation    - Activacion o desactivacion de reservas realizadas
+-  GET   http://hotelsback.somee.com/api/HotelReservation/AvailableRooms             -  Obtiene habitaciones disponibles segun filtros especificados 
+-  POST  http://hotelsback.somee.com/api/HotelReservation/CreateReservation          -  Crea una reservacion
+-  GET   http://hotelsback.somee.com/api/HotelReservation/Reservations               -  Lista las reservaciones realizadas
+-  PATCH http://hotelsback.somee.com/api/HotelReservation/UpdateStatusReservation    - Activacion o desactivacion de reservas realizadas
+
 ## Arquitectura
 
 Este proyecto sigue los principios de la Arquitectura Orientada al Dominio (DDD) y utiliza la Inyección de Dependencia para gestionar las dependencias entre los componentes. La estructura del proyecto está organizada de la siguiente manera:
